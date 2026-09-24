@@ -1,0 +1,3 @@
+export const REEL_WIDTH = 1080;
+export const REEL_HEIGHT = 1920;
+export const REEL_FPS = 30;

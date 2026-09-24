@@ -1,0 +1,1 @@
+export const EDIT_MANIFEST_SCHEMA_VERSION = 1;
