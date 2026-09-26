@@ -1,26 +1,40 @@
-import { Queue } from "bullmq";
-import { Redis } from "ioredis";
 import pino from "pino";
 
-const logger = pino({ name: "reelazo-worker" });
-const redisUrl = process.env.REDIS_URL ?? "redis://127.0.0.1:6379";
-const connection = new Redis(redisUrl, { maxRetriesPerRequest: null });
-const queue = new Queue("reel-generation", { connection });
+import { loadConfig } from "./config.js";
+import { createRedisConnection } from "./jobs/connection.js";
+import { createFixtureProviders } from "./providers/fixture.js";
+import { startReelWorker } from "./worker.js";
+import { noOpWorkflowStore } from "./workflow/store.js";
 
-connection.on("connect", () => {
-  logger.info({ queue: queue.name }, "Worker conectado a Redis");
+const config = loadConfig();
+const logger = pino({ name: "reelazo-worker" });
+const connection = createRedisConnection(config.REDIS_URL);
+const worker = startReelWorker({
+  connection,
+  config,
+  logger,
+  providers: createFixtureProviders(config.FIXTURE_STEP_DELAY_MS),
+  store: noOpWorkflowStore,
 });
 
+connection.on("connect", () => {
+  logger.info(
+    { queue: worker.name, concurrency: config.WORKER_CONCURRENCY },
+    "Worker conectado a Redis",
+  );
+});
 connection.on("error", (error: Error) => {
   logger.error({ error }, "No se pudo conectar a Redis");
 });
 
-const shutdown = async () => {
-  logger.info("Cerrando worker");
-  await queue.close();
+let shuttingDown = false;
+const shutdown = async (signal: string) => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  logger.info({ signal }, "Cerrando worker");
+  await worker.close();
   await connection.quit();
-  process.exit(0);
 };
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+process.once("SIGINT", () => void shutdown("SIGINT"));
+process.once("SIGTERM", () => void shutdown("SIGTERM"));

@@ -6,6 +6,7 @@
   "scripts": {
     "setup": "node setup.mjs",
     "dev": "tsx watch src/index.ts",
+    "job:fixture": "tsx src/cli/enqueue-fixture.ts",
     "services:start": "docker compose up -d redis",
     "services:stop": "pnpm exec supabase stop --no-backup && docker compose down",
     "db:start": "pnpm exec supabase start",
@@ -15,7 +16,8 @@
     "db:advisors": "pnpm exec supabase db advisors --local",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "bullmq": "^5.58.5",
@@ -27,6 +29,7 @@
     "@types/node": "^24.7.2",
     "supabase": "2.117.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.2"
   }
 }

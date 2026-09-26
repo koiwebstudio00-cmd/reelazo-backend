@@ -31,9 +31,9 @@ Supabase Storage no se utiliza. PostgreSQL conserva metadatos estables y R2 alma
 
 ## Estado actual
 
-Implementado: Supabase local, esquema inicial de perfiles/organizaciones/membresías/brand kits, RLS, triggers de onboarding, Redis y worker base conectado a BullMQ.
+Implementado: Supabase local, esquema inicial de perfiles/organizaciones/membresías/brand kits, RLS, triggers de onboarding, Redis y un sistema BullMQ con contratos validados, jobs idempotentes por revisión, reintentos, progreso por etapas y pipeline fixture.
 
-Siguiente entrega: pruebas RLS automatizadas, proyectos/reels/versiones/escenas/assets, URLs firmadas de R2 y primer workflow persistido.
+Siguiente entrega del backend: persistencia del workflow en PostgreSQL, outbox transaccional, recuperación de trabajos estancados y ejecución multimedia real con fixtures locales.
 
 ## Desarrollo local
 
@@ -61,8 +61,10 @@ pnpm dev
 |---|---|
 | `pnpm setup` | Prepara Supabase, Redis y el frontend local |
 | `pnpm dev` | Inicia el worker en modo desarrollo |
+| `pnpm job:fixture` | Encola una generación fixture para probar el worker |
 | `pnpm build` | Compila el worker |
 | `pnpm typecheck` | Verifica TypeScript |
+| `pnpm test` | Ejecuta las pruebas unitarias |
 | `pnpm services:start` | Inicia Redis |
 | `pnpm services:stop` | Detiene Supabase y Redis |
 | `pnpm db:start` | Inicia Supabase local |
@@ -85,3 +87,23 @@ Consultar `.env.example`. Los proveedores permanecen en modo `fixture` durante e
 ## Despliegue
 
 Los workers y Redis se despliegan en el VPS. Las migraciones pasan por local, staging y producción. Los cambios incompatibles deben coordinarse para desplegar primero la base/backend compatible y después el frontend consumidor.
+
+## Workers y jobs
+
+La cola `reel-generation` recibe jobs `generate-reel`. Cada payload contiene organización, reel, revisión, formato y escenas identificadas por `sceneId`.
+
+El pipeline actual ejecuta:
+
+```text
+validar entrada
+  → generar guion cuando corresponde
+  → generar clips
+  → generar voz cuando corresponde
+  → componer manifiesto
+  → renderizar
+  → validar salida
+```
+
+Los proveedores actuales generan rutas fixture determinísticas y no consumen APIs ni crean medios reales. BullMQ administra concurrencia, progreso, reintentos exponenciales y deduplicación mediante un `jobId` estable por organización y revisión.
+
+La interfaz `WorkflowStore` marca el límite de persistencia. Actualmente se usa una implementación vacía; en la siguiente etapa se conectará a las tablas de jobs de PostgreSQL sin modificar el pipeline.

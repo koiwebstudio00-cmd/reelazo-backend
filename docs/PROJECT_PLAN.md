@@ -138,6 +138,8 @@ Esta fase se completa antes de integrar APIs generativas pagas.
 
 ## 7. Fase 4 — Cola y trabajos recuperables
 
+Estado: contratos de job, cola BullMQ, worker, pipeline fixture, progreso, concurrencia, deduplicación y reintentos implementados. Pendiente persistencia PostgreSQL, outbox, cancelación y reconciliación.
+
 ### Entregables
 
 - BullMQ y Redis.
