@@ -70,7 +70,7 @@ Los componentes quedan copiados dentro del repositorio y pueden personalizarse. 
 
 ## 4. Fase 1 — Autenticación, organizaciones y base del producto
 
-Estado: autenticación, onboarding, RLS base y layout autenticado implementados. Pendiente completar pruebas automatizadas de aislamiento y enriquecer el inicio con datos de reels.
+Estado: autenticación, onboarding, RLS base, perfil editable y layout autenticado implementados en el frontend hermano. Pendiente completar pruebas automatizadas de aislamiento y alimentar el Home con reels persistidos.
 
 ### Entregables
 
@@ -91,6 +91,8 @@ Estado: autenticación, onboarding, RLS base y layout autenticado implementados.
 - Las tablas expuestas tienen RLS y políticas explícitas.
 
 ## 5. Fase 2 — Proyectos, carga de archivos y storyboard
+
+Estado coordinado: el frontend ya dispone de biblioteca, selección de formato y storyboard local con `sceneId` estable. La siguiente entrega conjunta debe crear el esquema persistente y reemplazar archivos locales por subidas privadas a R2.
 
 ### Entregables
 

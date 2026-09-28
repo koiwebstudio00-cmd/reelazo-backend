@@ -60,6 +60,8 @@ Responsable del esquema PostgreSQL, RLS, migraciones, Redis, colas y workers. Ej
 
 Las migraciones del backend son la fuente de verdad del esquema. El comando `pnpm db:types` del backend regenera `frontend/src/types/database.types.ts` cuando ambos repositorios son hermanos. Los cambios incompatibles deben coordinarse para que el backend se despliegue antes que el frontend que los consume.
 
+Actualmente el frontend persiste identidad de cuenta en `profiles` y utiliza datos demostrativos para reels y escenas. La siguiente ampliación del contrato debe cubrir proyectos, assets de R2, reels, revisiones, escenas y jobs antes de conectar el flujo visual al worker.
+
 ## Arquitectura del worker actual
 
 ```text

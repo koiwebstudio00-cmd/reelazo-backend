@@ -35,6 +35,8 @@ Implementado: Supabase local, esquema inicial de perfiles/organizaciones/membres
 
 Siguiente entrega del backend: persistencia del workflow en PostgreSQL, outbox transaccional, recuperación de trabajos estancados y ejecución multimedia real con fixtures locales.
 
+El frontend hermano ya consume Auth, organizaciones y `profiles`; incluye Home responsive con brandkit, cuenta editable, biblioteca y storyboard demostrativos. La próxima integración entre repositorios debe persistir reels/escenas, habilitar las URLs firmadas de R2 y conectar el CTA de generación con este pipeline.
+
 ## Desarrollo local
 
 La disposición recomendada es:
